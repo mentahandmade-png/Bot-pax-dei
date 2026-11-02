@@ -7,14 +7,16 @@ Uso:
 import json
 import os
 import sys
+from pathlib import Path
 
 import discord
 
 TOKEN = os.environ.get("DISCORD_TOKEN")
-GUILD_ID = int(os.environ.get("GUILD_ID", "0"))
+GUILD_ID = os.environ.get("GUILD_ID", "")
+GUILD_ID = int(GUILD_ID) if GUILD_ID.isdigit() else 0
 RESET = "--reset" in sys.argv
 
-with open("struttura.json", encoding="utf-8") as f:
+with open(Path(__file__).with_name("struttura.json"), encoding="utf-8") as f:
     STRUTTURA = json.load(f)
 
 client = discord.Client(intents=discord.Intents.default())
@@ -24,7 +26,9 @@ async def imposta_ruoli(guild):
     ruoli = {}
     for r in STRUTTURA["ruoli"]:
         ruolo = discord.utils.get(guild.roles, name=r["nome"])
-        perms = discord.Permissions.all() if r.get("admin") else discord.Permissions.general()
+        # I ruoli normali non aggiungono permessi: ereditano quelli di @everyone.
+        # (Permissions.general() darebbe a tutti "Gestisci server/canali/ruoli"!)
+        perms = discord.Permissions.all() if r.get("admin") else discord.Permissions.none()
         colore = discord.Colour.from_str(r["colore"])
         if ruolo is None:
             ruolo = await guild.create_role(name=r["nome"], colour=colore, permissions=perms, hoist=True)
@@ -69,8 +73,12 @@ async def on_ready():
         print(f"Imposto il server: {guild.name}")
         if RESET:
             for ch in list(guild.channels):
-                await ch.delete()
-            print("- cancellati tutti i canali esistenti")
+                try:
+                    await ch.delete()
+                except discord.HTTPException as e:
+                    # es. i canali "regole"/"aggiornamenti" di un server Community
+                    print(f"! non posso cancellare {ch.name}: {e.text}")
+            print("- cancellati i canali esistenti")
         ruoli = await imposta_ruoli(guild)
         await imposta_canali(guild, ruoli)
         print("Fatto!")
