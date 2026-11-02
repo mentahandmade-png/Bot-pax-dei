@@ -1,0 +1,34 @@
+{
+  "ruoli": [
+    {"nome": "Capo Clan", "colore": "#C9A227", "admin": true},
+    {"nome": "Ufficiale", "colore": "#B03A2E", "admin": false},
+    {"nome": "Artigiano", "colore": "#7D6608", "admin": false},
+    {"nome": "Guerriero", "colore": "#5D6D7E", "admin": false},
+    {"nome": "Membro", "colore": "#2E86C1", "admin": false},
+    {"nome": "Ospite", "colore": "#95A5A6", "admin": false}
+  ],
+  "categorie": [
+    {
+      "nome": "📜 INGRESSO",
+      "testo": ["benvenuto", "regole", "annunci"],
+      "sola_lettura": true
+    },
+    {
+      "nome": "🏰 CLAN",
+      "testo": ["chat-generale", "presentazioni", "screenshot", "off-topic"]
+    },
+    {
+      "nome": "⚒️ PAX DEI",
+      "testo": ["crafting", "mercato", "risorse-e-mappe", "pvp-e-raid", "guide"]
+    },
+    {
+      "nome": "🔒 UFFICIALI",
+      "testo": ["consiglio", "log-bot"],
+      "solo_ruoli": ["Capo Clan", "Ufficiale"]
+    },
+    {
+      "nome": "🔊 VOCALI",
+      "vocali": ["Taverna", "Spedizione 1", "Spedizione 2", "AFK"]
+    }
+  ]
+}
